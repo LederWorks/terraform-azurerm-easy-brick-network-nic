@@ -209,7 +209,7 @@ Description:     <!-- markdownlint-disable-file MD033 MD012 -->
     subnet\_id                       - (Optional) The ID of the Subnet where this Network Interface should be located in.  
 
     dns\_servers                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
-                                          Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.  
+                                      Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.  
 
     edge\_zone                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.  
 
@@ -226,7 +226,7 @@ Description:     <!-- markdownlint-disable-file MD033 MD012 -->
 
     application\_security\_group\_ids  - (Optional) A list of Application Security Group IDs associated with this Network Interface.  
 
-    ip\_config                       -  (Required) One or more ip\_configuration blocks as defined below.
+    ip\_config                       - (Required) One or more ip\_configuration blocks as defined below.
 
         name                  - (Required) A name used for this IP Configuration.  
         private\_ip\_allocation - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.  
@@ -248,7 +248,8 @@ list(object({
     network_security_group_id      = optional(string)
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
-      name                  = string
+      name = string
+      # name                  = optional(string, "default")
       private_ip_allocation = optional(string, "Dynamic")
       private_ip_address    = optional(string)
       public_ip_id          = optional(string)
@@ -314,7 +315,8 @@ object({
     network_security_group_id      = optional(string)
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
-      name                  = optional(string, "default")
+      name = string
+      # name                  = optional(string, "default")
       private_ip_allocation = optional(string, "Dynamic")
       private_ip_address    = optional(string)
       public_ip_id          = optional(string)
