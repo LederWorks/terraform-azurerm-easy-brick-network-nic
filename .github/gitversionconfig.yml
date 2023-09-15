@@ -10,7 +10,6 @@ merge-message-formats: {}
 branches:
   main:
     regex: ^master$|^main$
-    mode: Mainline
     tag: ''
     increment: Patch
     prevent-increment-of-merged-branch-version: true
