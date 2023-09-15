@@ -24,9 +24,9 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Generate Changelog
-      id: changelog
-      run: npx conventional-changelog -i CHANGELOG.md -s -p angular
+    # - name: Generate Changelog
+    #   id: changelog
+    #   run: npx conventional-changelog -i CHANGELOG.md -s -p angular
     
     - name: Determine Version
       id:   gitversion
