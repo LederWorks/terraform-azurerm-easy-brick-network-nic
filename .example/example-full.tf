@@ -86,7 +86,6 @@ module "network-nic" {
 
 }
 
-################################ Outputs
 output "nic_interface_list" {
   value = module.network-nic.nic_interface_list
 }
