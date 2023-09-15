@@ -69,16 +69,16 @@ variable "nic_default_interface" {
   #   ]), false)
   #   error_message = "You need to have ONE and ONE ONLY primary ip configuration per NIC."
   # }
-  validation {
-    condition = (
-      var.nic_default_interface == null ||
-      (
-        length(var.nic_default_interface.ip_config) > 0 &&
-        length([for ip_config in var.nic_default_interface.ip_config : ip_config if ip_config.primary]) >= 1
-      )
-    )
-    error_message = "You need to have at least one primary ip configuration per NIC in the default interface."
-  }
+  # validation {
+  #   condition = (
+  #     var.nic_default_interface == null ||
+  #     (
+  #       length(var.nic_default_interface.ip_config) > 0 &&
+  #       length([for ip_config in var.nic_default_interface.ip_config : ip_config if ip_config.primary]) >= 1
+  #     )
+  #   )
+  #   error_message = "You need to have at least one primary ip configuration per NIC in the default interface."
+  # }
 
 }
 
@@ -154,19 +154,19 @@ variable "nic_additional_interface" {
   #   ]), false)
   #   error_message = "You need to have ONE and ONE ONLY primary ip configuration per NIC."
   # }
-  validation {
-    condition = (
-      var.nic_additional_interface == null ||
-      (
-        alltrue([
-          for nic in var.nic_additional_interface :
-          length(nic.ip_config) > 0 &&
-          length([for ip_config in nic.ip_config : ip_config if ip_config.primary]) >= 1
-        ])
-      )
-    )
-    error_message = "You need to have at least one primary ip configuration per NIC."
-  }
+  # validation {
+  #   condition = (
+  #     var.nic_additional_interface == null ||
+  #     (
+  #       alltrue([
+  #         for nic in var.nic_additional_interface :
+  #         length(nic.ip_config) > 0 &&
+  #         length([for ip_config in nic.ip_config : ip_config if ip_config.primary]) >= 1
+  #       ])
+  #     )
+  #   )
+  #   error_message = "You need to have at least one primary ip configuration per NIC."
+  # }
 }
 
 #Global Variables

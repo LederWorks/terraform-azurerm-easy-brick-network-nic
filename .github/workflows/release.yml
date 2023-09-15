@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: '6.x'
+        includePrerelease: true
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    - name: Determine Version
+      id:   gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.7
+    
+    - name: Display GitVersion Output
+      run: echo "The determined version is ${{ steps.gitversion.outputs.semVer }}"
+
+    - name: Create Git Tag
+      run: git tag --annotate --message "PR #${{ env.pr_id }}" --message "$(< ${{ env.ChangelogFile }})" ${{ steps.gitversion.outputs.semVer }}
+    
+    - name: Create Git Short Tag
+      run: git tag --force "${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}"
+
+    - name: Create Git Stable Tag - Optional
+      if: contains(github.event.head_commit.message, '+stable') || contains(github.event.pull_request.body, '+stable')
+      run: git tag --force "${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}-stable"
+
+    - name: Push tags to repository
+      run: git push --tags

@@ -1,6 +1,6 @@
-module dev.azure.com/msci-otw/tech-iac/_git/terraform-azurerm-msci-compute-windows_vm/.test
+module github.com/LederWorks/terraform-azurerm-easy-brick-network-nic/.test
 
-go 1.18
+go 1.20
 
 require (
 	github.com/LederWorks/golang-easy-terratest v0.1.0
