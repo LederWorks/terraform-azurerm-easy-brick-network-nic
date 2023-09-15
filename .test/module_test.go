@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/LederWorks/golang-easy-terratest.git/rgrp"
+	"github.com/LederWorks/golang-easy-terratest/rgrp"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
@@ -20,10 +20,10 @@ func TestTerraform(t *testing.T) {
 		BackendConfig: map[string]interface{}{
 			"tenant_id":            os.Getenv("ARM_TENANT_ID"),
 			"subscription_id":      os.Getenv("ARM_SUBSCRIPTION_ID"),
-			"resource_group_name":  "RGRP",
-			"storage_account_name": "SACC",
-			"container_name":       "CONTAINER",
-			"key":                  "KEY",
+			"resource_group_name":  "rgrp-pde3-it-terratest",
+			"storage_account_name": "saccpde3itterratest001",
+			"container_name":       "terratest-azurerm",
+			"key":                  "terratest-azurerm-easy-brick-network-nic",
 		},
 	})
 

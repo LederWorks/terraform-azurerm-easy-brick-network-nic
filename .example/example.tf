@@ -42,6 +42,8 @@ module "network-nic" {
   #Global Variables
   nic_subnet_id = ""
 
+  nic_dns_servers = ["4.4.4.4", "8.8.8.8"]
+
   #Variables
 
   ###########################

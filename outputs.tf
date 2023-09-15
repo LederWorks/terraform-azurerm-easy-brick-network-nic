@@ -1,14 +1,14 @@
 ################################ NIC
 output "nic_interface_list" {
-  value = local.nic_all_interface
+  value       = local.nic_all_interface
   description = "A list of all interfaces."
 }
 output "nic_default_interface" {
-  value = local.nic_default_interface
+  value       = local.nic_default_interface
   description = "FOR TROUBLESHOOTING"
 }
 output "nic_additional_interface" {
-  value = local.nic_default_interface
+  value       = local.nic_default_interface
   description = "FOR TROUBLESHOOTING"
 }
 ################################ NSG

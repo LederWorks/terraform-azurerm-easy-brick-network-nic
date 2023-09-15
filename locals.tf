@@ -3,7 +3,7 @@ locals {
   tags = merge(
     var.tags,
     {
-      creation_mode                      = "terraform"
+      creation_mode                            = "terraform"
       terraform-azurerm-easy-brick-network-nic = "True"
     }
   )
