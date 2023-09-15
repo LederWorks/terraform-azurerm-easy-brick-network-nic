@@ -13,11 +13,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Git Configuration
+      uses: oleksiyrudenko/gha-git-credentials@v2-latest
+      with:
+        token: '${{ secrets.GITHUB_TOKEN }}'
+
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.10.2
       with:
         versionSpec: '5.x'
-        # includePrerelease: true
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -40,14 +44,14 @@ jobs:
       run: echo "The determined version is ${{ steps.gitversion.outputs.MajorMinorPatch }}"
 
     - name: Create Git Semver Tag
-      run: git tag --annotate --message "PR#${{ github.event.number }}" ${{ steps.gitversion.outputs.MajorMinorPatch }}
+      run: git tag --annotate --message "PR#${{ github.event.number }}" v${{ steps.gitversion.outputs.MajorMinorPatch }}
     
     - name: Create Git Short Tag
-      run: git tag --force "${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}"
+      run: git tag --force "v${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}"
 
     - name: Create Git Stable Tag - Optional
       if: contains(github.event.head_commit.message, '+stable') || contains(github.event.pull_request.body, '+stable')
-      run: git tag --force "${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}-stable"
+      run: git tag --force "v${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}-stable"
 
     - name: Push tags to repository
       run: git push --tags
