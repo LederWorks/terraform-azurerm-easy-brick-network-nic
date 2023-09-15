@@ -58,43 +58,6 @@ module "network-nic" {
 
 ### All configuration options
 ```hcl
-################################ Resource Group
-resource "azurerm_resource_group" "network-nic" {
-  name     = "network-nic"
-  location = "East US 2"
-  tags     = local.tags
-}
-
-################################ Public IPs
-resource "azurerm_public_ip" "public-ip1" {
-  name                = "public-ip1"
-  resource_group_name = azurerm_resource_group.network-nic.name
-  location            = azurerm_resource_group.network-nic.location
-  allocation_method   = "Static"
-}
-resource "azurerm_public_ip" "public-ip2" {
-  name                = "public-ip2"
-  resource_group_name = azurerm_resource_group.network-nic.name
-  location            = azurerm_resource_group.network-nic.location
-  allocation_method   = "Static"
-}
-resource "azurerm_public_ip" "public-ip3" {
-  name                = "public-ip3"
-  resource_group_name = azurerm_resource_group.network-nic.name
-  location            = azurerm_resource_group.network-nic.location
-  allocation_method   = "Static"
-}
-
-################################ NSG
-
-
-
-################################ ASGs
-
-
-
-
-################################ NIC Module
 module "network-nic" {
   source  = "LederWorks/easy-brick-network-nic/azurerm"
   version = "X.X.X"
@@ -116,13 +79,16 @@ module "network-nic" {
   nic_default_interface = {
     name                           = "vnic-001"
     subnet_id                      = ""
-    dns_servers                    = ["4.4.4.4", "8.8.8.8"]
+    dns_servers                    = []
     edge_zone                      = ""
     ip_forwarding_enabled          = true
     accelerated_networking_enabled = true
     internal_dns_name_label        = ""
     network_security_group_id      = ""
-    application_security_group_ids = []
+    application_security_group_ids = [
+      azurerm_application_security_group.network-nic001.id,
+      azurerm_application_security_group.network-nic002.id
+    ]
 
     ip_config = [
       {
@@ -143,11 +109,16 @@ module "network-nic" {
     {
       name                           = "vnic-002"
       subnet_id                      = azurerm_subnet.network-nic002.id
-      dns_servers                    = ["4.4.4.4", "8.8.8.8"]
+      dns_servers                    = ["1.1.1.1", "1.0.0.1"]
       edge_zone                      = ""
       ip_forwarding_enabled          = true
       accelerated_networking_enabled = true
       internal_dns_name_label        = ""
+      network_security_group_id      = azurerm_network_security_group.network-nic.id
+      application_security_group_ids = [
+        azurerm_application_security_group.network-nic001.id,
+        azurerm_application_security_group.network-nic003.id
+      ]
       ip_config = [
         {
           name                  = "primary"
@@ -163,24 +134,18 @@ module "network-nic" {
     },
     #vnic-003
     {
-      name      = "vnic-003"
-      subnet_id = azurerm_subnet.network-nic002.id
-      ip_config = [
-        {
-          name    = "primary"
-          primary = true
-        },
-        {
-          name         = "public"
-          public_ip_id = azurerm_public_ip.public-ip3.id
-        }
+      name                      = "vnic-003"
+      subnet_id                 = azurerm_subnet.network-nic003.id
+      network_security_group_id = azurerm_network_security_group.network-nic.id
+      application_security_group_ids = [
+        azurerm_application_security_group.network-nic002.id,
+        azurerm_application_security_group.network-nic003.id
       ]
     }
   ]
 
 }
 
-################################ Outputs
 output "nic_interface_list" {
   value = module.network-nic.nic_interface_list
 }
