@@ -40,7 +40,7 @@ jobs:
       run: echo "The determined version is ${{ steps.gitversion.outputs.MajorMinorPatch }}"
 
     - name: Create Git Semver Tag
-      run: git tag --annotate --message "PR ${{ github.event.number }}" ${{ steps.gitversion.outputs.MajorMinorPatch }}"
+      run: git tag --annotate --message "PR#${{ github.event.number }}" ${{ steps.gitversion.outputs.MajorMinorPatch }}
     
     - name: Create Git Short Tag
       run: git tag --force "${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}"
