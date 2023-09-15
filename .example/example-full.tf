@@ -25,6 +25,15 @@ resource "azurerm_public_ip" "public-ip3" {
   allocation_method   = "Static"
 }
 
+################################ NSG
+
+
+
+################################ ASGs
+
+
+
+
 ################################ NIC Module
 module "network-nic" {
   source  = "LederWorks/easy-brick-network-nic/azurerm"
@@ -40,16 +49,10 @@ module "network-nic" {
   tags = local.tags
 
   #Global Variables
-  nic_subnet_id = ""
-
+  nic_subnet_id   = azurerm_subnet.network-nic001.id
   nic_dns_servers = ["4.4.4.4", "8.8.8.8"]
 
-  #Variables
-
-  ###########################
-  #### Default Interface ####
-  ###########################
-
+  #Local Variables
   nic_default_interface = {
     name                           = "vnic-001"
     subnet_id                      = ""
@@ -58,47 +61,40 @@ module "network-nic" {
     ip_forwarding_enabled          = true
     accelerated_networking_enabled = true
     internal_dns_name_label        = ""
+    network_security_group_id      = ""
+    application_security_group_ids = []
 
     ip_config = [
-      #default-primary
       {
         name                  = "default-primary"
         private_ip_allocation = "Static"
         private_ip_address    = "192.168.169.170"
         primary               = true
       },
-      #default-public
       {
         name         = "default-public"
         public_ip_id = azurerm_public_ip.public-ip1.id
       }
     ]
+
   }
 
-  ###############################
-  #### Additional Interfaces ####
-  ###############################
-
   nic_additional_interface = [
-
-    #vnic-002
     {
       name                           = "vnic-002"
-      subnet_id                      = ""
+      subnet_id                      = azurerm_subnet.network-nic002.id
       dns_servers                    = ["4.4.4.4", "8.8.8.8"]
       edge_zone                      = ""
       ip_forwarding_enabled          = true
       accelerated_networking_enabled = true
       internal_dns_name_label        = ""
       ip_config = [
-        #primary
         {
-          name    = "primary"
+          name                  = "primary"
           private_ip_allocation = "Static"
           private_ip_address    = "192.168.169.171"
-          primary = true
+          primary               = true
         },
-        #public
         {
           name         = "public"
           public_ip_id = azurerm_public_ip.public-ip2.id
@@ -107,14 +103,13 @@ module "network-nic" {
     },
     #vnic-003
     {
-      name = "vnic-003"
+      name      = "vnic-003"
+      subnet_id = azurerm_subnet.network-nic002.id
       ip_config = [
-        #primary
         {
           name    = "primary"
           primary = true
         },
-        #public
         {
           name         = "public"
           public_ip_id = azurerm_public_ip.public-ip3.id
@@ -122,7 +117,7 @@ module "network-nic" {
       ]
     }
   ]
-  
+
 }
 
 ################################ Outputs

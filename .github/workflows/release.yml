@@ -20,6 +20,10 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
+
+    - name: Generate Changelog
+      id: changelog
+      run: npx conventional-changelog -i CHANGELOG.md -s -p angular
     
     - name: Determine Version
       id:   gitversion
@@ -28,7 +32,7 @@ jobs:
     - name: Display GitVersion Output
       run: echo "The determined version is ${{ steps.gitversion.outputs.semVer }}"
 
-    - name: Create Git Tag
+    - name: Create Git Semver Tag
       run: git tag --annotate --message "PR #${{ env.pr_id }}" --message "$(< ${{ env.ChangelogFile }})" ${{ steps.gitversion.outputs.semVer }}
     
     - name: Create Git Short Tag
@@ -40,3 +44,25 @@ jobs:
 
     - name: Push tags to repository
       run: git push --tags
+  
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.gitversion.outputs.semVer }}
+        release_name: Release ${{ steps.gitversion.outputs.semVer }}
+        body: ${{ steps.changelog.outputs.changelog }}
+        draft: false
+        prerelease: false
+
+    - name: Publish Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: CHANGELOG.md
+        asset_name: CHANGELOG.md
+        asset_content_type: application/markdown
