@@ -3,11 +3,13 @@ resource "azurerm_network_interface" "default_interface" {
   for_each = var.nic_default_interface != null ? toset(["nic"]) : toset([])
 
   lifecycle {
+
     # Check if nic_default_interface is null or has exactly one primary ip_config
-    precondition = {
+    precondition {
       condition     = var.nic_default_interface == null || length([for e in var.nic_default_interface.ip_config : e if e.primary]) == 1
       error_message = "You need to have exactly one primary ip configuration per NIC."
     }
+    
   }
 
   resource_group_name = var.resource_group_object.name
@@ -39,11 +41,13 @@ resource "azurerm_network_interface" "additional_interface" {
   for_each = var.nic_additional_interface != null ? { for obj in var.nic_additional_interface : obj.name => obj } : {}
 
   lifecycle {
+    
     # Check if nic_additional_interface is null or has exactly one primary ip_config per element
-    precondition = {
+    precondition {
       condition     = length([for e in each.value.ip_config : e if e.primary]) == 1
       error_message = "You need to have exactly one primary ip configuration per NIC."
     }
+
   }
 
   resource_group_name = var.resource_group_object.name
@@ -67,5 +71,5 @@ resource "azurerm_network_interface" "additional_interface" {
       primary                       = coalesce(ip_configuration.value.primary, false)
     }
   }
-  
+
 }
