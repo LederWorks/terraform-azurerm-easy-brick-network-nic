@@ -45,7 +45,8 @@ variable "nic_default_interface" {
     network_security_group_id      = optional(string)
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
-      name                  = optional(string, "default")
+      name = string
+      # name                  = optional(string, "default")
       private_ip_allocation = optional(string, "Dynamic")
       private_ip_address    = optional(string)
       public_ip_id          = optional(string)
@@ -59,15 +60,26 @@ variable "nic_default_interface" {
     )
   })
   default = null
+  # validation {
+  #   condition = var.nic_default_interface == null || try(alltrue([
+  #     length([
+  #       for e in var.nic_default_interface.ip_config :
+  #       e if coalesce(e.primary, false)
+  #     ]) == 1
+  #   ]), false)
+  #   error_message = "You need to have ONE and ONE ONLY primary ip configuration per NIC."
+  # }
   validation {
-    condition = var.nic_default_interface == null || try(alltrue([
-      length([
-        for e in var.nic_default_interface.ip_config :
-        e if coalesce(e.primary, false)
-      ]) == 1
-    ]), false)
-    error_message = "You need to have ONE and ONE ONLY primary ip configuration per NIC."
+    condition = (
+      var.nic_default_interface == null ||
+      (
+        length(var.nic_default_interface.ip_config) > 0 &&
+        length([for ip_config in var.nic_default_interface.ip_config : ip_config if ip_config.primary]) >= 1
+      )
+    )
+    error_message = "You need to have at least one primary ip configuration per NIC in the default interface."
   }
+
 }
 
 variable "nic_additional_interface" {
@@ -80,7 +92,7 @@ variable "nic_additional_interface" {
     subnet_id                       - (Optional) The ID of the Subnet where this Network Interface should be located in.
     
     dns_servers                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface. 
-                                          Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.
+                                      Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.
     
     edge_zone                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.
     
@@ -97,7 +109,7 @@ variable "nic_additional_interface" {
     
     application_security_group_ids  - (Optional) A list of Application Security Group IDs associated with this Network Interface.
     
-    ip_config                       -  (Required) One or more ip_configuration blocks as defined below.
+    ip_config                       - (Required) One or more ip_configuration blocks as defined below.
 
         name                  - (Required) A name used for this IP Configuration.
         private_ip_allocation - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.
@@ -117,7 +129,8 @@ variable "nic_additional_interface" {
     network_security_group_id      = optional(string)
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
-      name                  = string
+      name = string
+      # name                  = optional(string, "default")
       private_ip_allocation = optional(string, "Dynamic")
       private_ip_address    = optional(string)
       public_ip_id          = optional(string)
@@ -131,15 +144,28 @@ variable "nic_additional_interface" {
     )
   }))
   default = null
+  # validation {
+  #   condition = var.nic_additional_interface == null || try(alltrue([
+  #     for o in var.nic_additional_interface :
+  #     length([
+  #       for e in o.nic_ip_config :
+  #       e if coalesce(e.nic_ip_config_primary, false
+  #     )]) == 1
+  #   ]), false)
+  #   error_message = "You need to have ONE and ONE ONLY primary ip configuration per NIC."
+  # }
   validation {
-    condition = var.nic_additional_interface == null || try(alltrue([
-      for o in var.nic_additional_interface :
-      length([
-        for e in o.nic_ip_config :
-        e if coalesce(e.nic_ip_config_primary, false
-      )]) == 1
-    ]), false)
-    error_message = "You need to have ONE and ONE ONLY primary ip configuration per NIC."
+    condition = (
+      var.nic_additional_interface == null ||
+      (
+        alltrue([
+          for nic in var.nic_additional_interface :
+          length(nic.ip_config) > 0 &&
+          length([for ip_config in nic.ip_config : ip_config if ip_config.primary]) >= 1
+        ])
+      )
+    )
+    error_message = "You need to have at least one primary ip configuration per NIC."
   }
 }
 

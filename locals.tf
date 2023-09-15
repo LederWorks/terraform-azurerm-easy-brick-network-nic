@@ -63,7 +63,7 @@ locals {
 
   ################################ ASG Association
   nic_default_asg_association = var.nic_default_interface != null ? {
-    for asg in coalesce(var.nic_default_interface.application_security_group_ids, []):
+    for asg in coalesce(var.nic_default_interface.application_security_group_ids, []) :
     "${var.nic_default_interface.name}-${asg}" => {
       name                          = var.nic_default_interface.name
       application_security_group_id = asg
