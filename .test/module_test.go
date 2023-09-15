@@ -37,7 +37,8 @@ func TestTerraform(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	//tenantID := terraform.Output(t, terraformOptions, "tenant_id")
-	subscriptionID := terraform.Output(t, terraformOptions, "subscription_id")
+	//subscriptionID := terraform.Output(t, terraformOptions, "subscription_id")
+	subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
 	resourceGroupName := terraform.Output(t, terraformOptions, "resource_group_name")
 	//clientID := terraform.Output(t, terraformOptions, "client_id")
 
