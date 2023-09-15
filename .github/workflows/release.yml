@@ -1,4 +1,4 @@
-name: Release
+name: Release - terraform-azurerm-easy-brick-network-nic
 
 on:
   push:
