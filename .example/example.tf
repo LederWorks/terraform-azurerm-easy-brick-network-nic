@@ -1,11 +1,11 @@
-#Resource Group
+################################ Resource Group
 resource "azurerm_resource_group" "network-nic" {
   name     = "network-nic"
   location = "East US 2"
   tags     = local.tags
 }
 
-#Public IPs
+################################ Public IPs
 resource "azurerm_public_ip" "public-ip1" {
   name                = "public-ip1"
   resource_group_name = azurerm_resource_group.network-nic.name
@@ -25,7 +25,7 @@ resource "azurerm_public_ip" "public-ip3" {
   allocation_method   = "Static"
 }
 
-#NIC Module
+################################ NIC Module
 module "network-nic" {
   source  = "LederWorks/easy-brick-network-nic/azurerm"
   version = "X.X.X"
@@ -120,11 +120,10 @@ module "network-nic" {
       ]
     }
   ]
-
-
+  
 }
 
-#Outputs
+################################ Outputs
 output "nic_interface_list" {
   value = module.network-nic.nic_interface_list
 }
