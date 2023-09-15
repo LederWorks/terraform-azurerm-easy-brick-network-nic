@@ -89,7 +89,6 @@ module "network-nic" {
       azurerm_application_security_group.network-nic001.id,
       azurerm_application_security_group.network-nic002.id
     ]
-
     ip_config = [
       {
         name                  = "default-primary"
@@ -102,7 +101,6 @@ module "network-nic" {
         public_ip_id = azurerm_public_ip.public-ip1.id
       }
     ]
-
   }
 
   nic_additional_interface = [
@@ -132,7 +130,6 @@ module "network-nic" {
         }
       ]
     },
-    #vnic-003
     {
       name                      = "vnic-003"
       subnet_id                 = azurerm_subnet.network-nic003.id
@@ -143,7 +140,6 @@ module "network-nic" {
       ]
     }
   ]
-
 }
 
 output "nic_interface_list" {
@@ -191,35 +187,35 @@ The following input variables are optional (have default values):
 Description:     <!-- markdownlint-disable-file MD033 MD012 -->
     (Optional) List of additional Network Interfaces to be created.
 
-    name                            - (Required) The name of the Network Interface. Changing this forces a new resource to be created.
+    `name`                            - (Required) The name of the Network Interface. Changing this forces a new resource to be created.
 
-    subnet\_id                       - (Optional) The ID of the Subnet where this Network Interface should be located in.  
+    `subnet_id`                       - (Optional) The ID of the Subnet where this Network Interface should be located in.
 
-    dns\_servers                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
-                                      Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.  
+    `dns_servers`                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
+                                        Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.
 
-    edge\_zone                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.  
+    `edge_zone`                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.
 
-    ip\_forwarding\_enabled           - (Optional) Should IP Forwarding be enabled? Defaults to false.  
+    `ip_forwarding_enabled`           - (Optional) Should IP Forwarding be enabled? Defaults to false.
 
-    accelerated\_networking\_enabled  - (Optional) Should Accelerated Networking be enabled? Defaults to false.   
-                                      Only certain Virtual Machine sizes are supported for Accelerated Networking.  
-                                      For more information check https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli.  
-                                      To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.  
+    `accelerated_networking_enabled`  - (Optional) Should Accelerated Networking be enabled? Defaults to false.   
+                                        Only certain Virtual Machine sizes are supported for Accelerated Networking.  
+                                        For more information check https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli.  
+                                        To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.
 
-    internal\_dns\_name\_label         - (Optional) The (relative) DNS Name used for internal communications between Virtual Machines in the same Virtual Network.  
+    `internal_dns_name_label`         - (Optional) The (relative) DNS Name used for internal communications between Virtual Machines in the same Virtual Network.
       
-    network\_security\_group\_id       - (Optional) The Network Security Group ID associated with this Network Interface.  
+    `network_security_group_id`       - (Optional) The Network Security Group ID associated with this Network Interface.
 
-    application\_security\_group\_ids  - (Optional) A list of Application Security Group IDs associated with this Network Interface.  
+    `application_security_group_ids`  - (Optional) A list of Application Security Group IDs associated with this Network Interface.
 
-    ip\_config                       - (Required) One or more ip\_configuration blocks as defined below.
+    `ip_config`                       - (Required) One or more ip\_configuration blocks as defined below.
 
-        name                  - (Required) A name used for this IP Configuration.  
-        private\_ip\_allocation - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.  
-        private\_ip\_address    - (Optional) The Static IP Address which should be used. Required when private\_ip\_allocation = "Static".  
-        public\_ip\_id          - (Optional) Reference to a Public IP Address to associate with this NIC  
-        primary               - (Optional) Is this the Primary IP Configuration? Must be true for the first ip\_config when multiple are specified. Defaults to false.
+        `name`                  - (Required) A name used for this IP Configuration.
+        `private_ip_allocation` - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.
+        `private_ip_address`    - (Optional) The Static IP Address which should be used. Required when private\_ip\_allocation = "Static".
+        `public_ip_id`          - (Optional) Reference to a Public IP Address to associate with this NIC
+        `primary`               - (Optional) Is this the Primary IP Configuration? Must be true for the first ip\_config when multiple are specified. Defaults to false.
 
 Type:
 
@@ -236,7 +232,6 @@ list(object({
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
       name = string
-      # name                  = optional(string, "default")
       private_ip_allocation = optional(string, "Dynamic")
       private_ip_address    = optional(string)
       public_ip_id          = optional(string)
@@ -303,7 +298,6 @@ object({
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
       name = string
-      # name                  = optional(string, "default")
       private_ip_allocation = optional(string, "Dynamic")
       private_ip_address    = optional(string)
       public_ip_id          = optional(string)
