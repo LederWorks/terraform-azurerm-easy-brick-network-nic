@@ -314,7 +314,7 @@ object({
     network_security_group_id      = optional(string)
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
-      name                  = string
+      name                  = optional(string, "default")
       private_ip_allocation = optional(string, "Dynamic")
       private_ip_address    = optional(string)
       public_ip_id          = optional(string)
