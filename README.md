@@ -75,6 +75,8 @@ module "network-nic" {
   #Global Variables
   nic_subnet_id = ""
 
+  nic_dns_servers = ["4.4.4.4", "8.8.8.8"]
+
   #Variables
 
   ###########################
@@ -246,11 +248,11 @@ list(object({
     network_security_group_id      = optional(string)
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
-      name                         = string
-      private_ip_allocation        = optional(string, "Dynamic")
-      private_ip_address           = optional(string)
-      public_ip_id                 = optional(string)
-      primary                      = optional(bool, false)
+      name                  = string
+      private_ip_allocation = optional(string, "Dynamic")
+      private_ip_address    = optional(string)
+      public_ip_id          = optional(string)
+      primary               = optional(bool, false)
       })),
       [{
         name                  = "default"
@@ -312,11 +314,11 @@ object({
     network_security_group_id      = optional(string)
     application_security_group_ids = optional(list(string))
     ip_config = optional(list(object({
-      name                         = string
-      private_ip_allocation        = optional(string, "Dynamic")
-      private_ip_address           = optional(string)
-      public_ip_id                 = optional(string)
-      primary                      = optional(bool, false)
+      name                  = string
+      private_ip_allocation = optional(string, "Dynamic")
+      private_ip_address    = optional(string)
+      public_ip_id          = optional(string)
+      primary               = optional(bool, false)
       })),
       [{
         name                  = "default"
