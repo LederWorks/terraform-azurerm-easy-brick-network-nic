@@ -16,8 +16,8 @@ jobs:
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.10.2
       with:
-        versionSpec: '6.x'
-        includePrerelease: true
+        versionSpec: '5.x'
+        # includePrerelease: true
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
       uses: gittools/actions/gitversion/execute@v0.10.2
       with:
         useConfigFile: true
-        configFilePath: VersionConfig.yml
+        configFilePath: ./.github/gitversionconfig.yml
         # additionalArguments: '/showConfig'
     
     - name: Display GitVersion outputs (step output)
