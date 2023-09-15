@@ -29,7 +29,6 @@ module "network-nic" {
       azurerm_application_security_group.network-nic001.id,
       azurerm_application_security_group.network-nic002.id
     ]
-
     ip_config = [
       {
         name                  = "default-primary"
@@ -42,7 +41,6 @@ module "network-nic" {
         public_ip_id = azurerm_public_ip.public-ip1.id
       }
     ]
-
   }
 
   nic_additional_interface = [
@@ -72,7 +70,6 @@ module "network-nic" {
         }
       ]
     },
-    #vnic-003
     {
       name                      = "vnic-003"
       subnet_id                 = azurerm_subnet.network-nic003.id
@@ -83,7 +80,6 @@ module "network-nic" {
       ]
     }
   ]
-
 }
 
 output "nic_interface_list" {
