@@ -80,12 +80,14 @@ module "terratest-network-nic" {
     {
       name                           = "vnic-002"
       subnet_id = azurerm_subnet.snet-tde3-it-terratest-network-nic002.id
+      primary               = true
     },
     #vnic-003
     {
       name = "vnic-003"
       subnet_id = azurerm_subnet.snet-tde3-it-terratest-network-nic003.id
       dns_servers = [ "1.1.1.1", "1.0.0.1" ]
+      primary               = true
     }
   ]
 
