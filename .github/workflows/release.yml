@@ -1,21 +1,68 @@
-# on:
-#   - pull_request
-# jobs:
-#   docs:
-#     runs-on: ubuntu-latest
-#     steps:
+name: Release - terraform-azurerm-easy-brick-network-nic
 
-#     - name: Install GitVersion
-#       uses: gittools/actions/gitversion/setup@v0.9.7
-#       with:
-#         versionSpec: '6.x'
-#         includePrerelease: true
+on:
+  push:
+    branches:
+      - main
 
-#     - name: Checkout
-#       uses: actions/checkout@v2
-#       with:
-#         fetch-depth: 0
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: '6.x'
+        includePrerelease: true
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Generate Changelog
+      id: changelog
+      run: npx conventional-changelog -i CHANGELOG.md -s -p angular
     
-#     - name: Determine Version
-#       id:   gitversion
-#       uses: gittools/actions/gitversion/execute@v0.9.7
+    - name: Determine Version
+      id:   gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.7
+    
+    - name: Display GitVersion Output
+      run: echo "The determined version is ${{ steps.gitversion.outputs.semVer }}"
+
+    - name: Create Git Semver Tag
+      run: git tag --annotate --message "PR #${{ env.pr_id }}" --message "$(< ${{ env.ChangelogFile }})" ${{ steps.gitversion.outputs.semVer }}
+    
+    - name: Create Git Short Tag
+      run: git tag --force "${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}"
+
+    - name: Create Git Stable Tag - Optional
+      if: contains(github.event.head_commit.message, '+stable') || contains(github.event.pull_request.body, '+stable')
+      run: git tag --force "${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}-stable"
+
+    - name: Push tags to repository
+      run: git push --tags
+  
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.gitversion.outputs.semVer }}
+        release_name: Release ${{ steps.gitversion.outputs.semVer }}
+        body: ${{ steps.changelog.outputs.changelog }}
+        draft: false
+        prerelease: false
+
+    - name: Publish Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: CHANGELOG.md
+        asset_name: CHANGELOG.md
+        asset_content_type: application/markdown

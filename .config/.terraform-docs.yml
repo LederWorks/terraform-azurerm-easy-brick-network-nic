@@ -22,10 +22,16 @@ content: |-
 
   {{ .Providers }}
 
-  ## Example
+  ## Examples
 
+  ### Just give me a NIC fast
   ```hcl
-  {{ include ".example/example.tf" }}
+  {{ include ".example/example-simple.tf" }}
+  ```
+
+  ### All configuration options
+  ```hcl
+  {{ include ".example/example-full.tf" }}
   ```
 
   {{ .Resources }}
