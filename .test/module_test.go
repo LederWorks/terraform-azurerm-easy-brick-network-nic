@@ -1,4 +1,3 @@
-// Module Test
 package main
 
 import (
@@ -6,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/LederWorks/golang-easy-terratest/rgrp"
-
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
@@ -36,11 +34,10 @@ func TestTerraform(t *testing.T) {
 	// Run `terraform init` and `terraform apply`. Fail the test if there are any errors.
 	terraform.InitAndApply(t, terraformOptions)
 
-	//tenantID := terraform.Output(t, terraformOptions, "tenant_id")
-	subscriptionID := terraform.Output(t, terraformOptions, "subscription_id")
-	// subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
+	//tenantID := os.Getenv("ARM_TENANT_ID")
+	subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
 	resourceGroupName := terraform.Output(t, terraformOptions, "resource_group_name")
-	//clientID := terraform.Output(t, terraformOptions, "client_id")
+	//clientID := os.Getenv("ARM_CLIENT_ID")
 
 	// Run test for resource group
 	rgrp.TestResourceGroupExists(t, terraformOptions, subscriptionID, resourceGroupName)
