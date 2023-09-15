@@ -10,7 +10,7 @@ This module implements the [NIC](https://lederworks.com/docs/microsoft-azure/bri
 
 ## How to Use This Modul
 - Ensure Azure credentials are [in place](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) (e.g. `az login` and `az account set --subscription="SUBSCRIPTION_ID"` on your workstation)
-    - Owner role or equivalent is required!
+- Owner role or equivalent is required!
 - Ensure pre-requisite resources are created.
 - Create a Terraform configuration that pulls in this module and specifies values for the required variables.
 
@@ -18,15 +18,15 @@ This module implements the [NIC](https://lederworks.com/docs/microsoft-azure/bri
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>=1.3.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>=1.3.4)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.67.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.4.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.67.0)
 
 ## Example
 
@@ -82,26 +82,26 @@ module "network-nic" {
   ###########################
 
   nic_default_interface = {
-    nic_name                           = "vnic-001"
-    nic_subnet_id                      = ""
-    nic_dns_servers                    = ["4.4.4.4", "8.8.8.8"]
-    nic_edge_zone                      = ""
-    nic_ip_forwarding_enabled          = true
-    nic_accelerated_networking_enabled = true
-    nic_internal_dns_name_label        = ""
+    name                           = "vnic-001"
+    subnet_id                      = ""
+    dns_servers                    = ["4.4.4.4", "8.8.8.8"]
+    edge_zone                      = ""
+    ip_forwarding_enabled          = true
+    accelerated_networking_enabled = true
+    internal_dns_name_label        = ""
 
-    nic_ip_config = [
+    ip_config = [
       #default-primary
       {
-        nic_ip_config_name                  = "default-primary"
-        nic_ip_config_private_ip_allocation = "Static"
-        nic_ip_config_private_ip_address    = "192.168.169.170"
-        nic_ip_config_primary               = true
+        name                  = "default-primary"
+        private_ip_allocation = "Static"
+        private_ip_address    = "192.168.169.170"
+        primary               = true
       },
       #default-public
       {
-        nic_ip_config_name         = "default-public"
-        nic_ip_config_public_ip_id = azurerm_public_ip.public-ip1.id
+        name         = "default-public"
+        public_ip_id = azurerm_public_ip.public-ip1.id
       }
     ]
   }
@@ -114,41 +114,41 @@ module "network-nic" {
 
     #vnic-002
     {
-      nic_name                           = "vnic-002"
-      nic_subnet_id                      = ""
-      nic_dns_servers                    = ["4.4.4.4", "8.8.8.8"]
-      nic_edge_zone                      = ""
-      nic_ip_forwarding_enabled          = true
-      nic_accelerated_networking_enabled = true
-      nic_internal_dns_name_label        = ""
-      nic_ip_config = [
+      name                           = "vnic-002"
+      subnet_id                      = ""
+      dns_servers                    = ["4.4.4.4", "8.8.8.8"]
+      edge_zone                      = ""
+      ip_forwarding_enabled          = true
+      accelerated_networking_enabled = true
+      internal_dns_name_label        = ""
+      ip_config = [
         #primary
         {
-          nic_ip_config_name    = "primary"
-          nic_ip_config_private_ip_allocation = "Static"
-          nic_ip_config_private_ip_address    = "192.168.169.171"
-          nic_ip_config_primary = true
+          name    = "primary"
+          private_ip_allocation = "Static"
+          private_ip_address    = "192.168.169.171"
+          primary = true
         },
         #public
         {
-          nic_ip_config_name         = "public"
-          nic_ip_config_public_ip_id = azurerm_public_ip.public-ip2.id
+          name         = "public"
+          public_ip_id = azurerm_public_ip.public-ip2.id
         }
       ]
     },
     #vnic-003
     {
-      nic_name = "vnic-003"
-      nic_ip_config = [
+      name = "vnic-003"
+      ip_config = [
         #primary
         {
-          nic_ip_config_name    = "primary"
-          nic_ip_config_primary = true
+          name    = "primary"
+          primary = true
         },
         #public
         {
-          nic_ip_config_name         = "public"
-          nic_ip_config_public_ip_id = azurerm_public_ip.public-ip3.id
+          name         = "public"
+          public_ip_id = azurerm_public_ip.public-ip3.id
         }
       ]
     }
@@ -158,25 +158,14 @@ module "network-nic" {
 }
 
 #Outputs
-#auth
-output "tenant_id" {
-  value = data.azurerm_client_config.current.tenant_id
-}
-output "subscription_id" {
-  value = data.azurerm_client_config.current.subscription_id
-}
-output "client_id" {
-  value = data.azurerm_client_config.current.client_id
-}
-
-#rgrp
-output "resource_group_name" {
-  value = azurerm_resource_group.network-nic.name
-}
-
-#nic
 output "nic_interface_list" {
   value = module.network-nic.nic_interface_list
+}
+output "nic_nsg_association" {
+  value = module.network-nic.nic_nsg_association
+}
+output "nic_asg_association" {
+  value = module.network-nic.nic_asg_association
 }
 ```
 
@@ -186,6 +175,8 @@ The following resources are used by this module:
 
 - [azurerm_network_interface.additional_interface](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) (resource)
 - [azurerm_network_interface.default_interface](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) (resource)
+- [azurerm_network_interface_application_security_group_association.asg_association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_application_security_group_association) (resource)
+- [azurerm_network_interface_security_group_association.nsg_association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association) (resource)
 
 ## Required Inputs
 
@@ -209,57 +200,65 @@ The following input variables are optional (have default values):
 
 ### <a name="input_nic_additional_interface"></a> [nic\_additional\_interface](#input\_nic\_additional\_interface)
 
-Description:     (Optional) List of additional Network Interfaces to be created.
+Description:     <!-- markdownlint-disable-file MD033 MD012 -->
+    (Optional) List of additional Network Interfaces to be created.
 
-    REQUIRED
+    name                            - (Required) The name of the Network Interface. Changing this forces a new resource to be created.
 
-    nic\_name                            - (Required) The name of the Network Interface. Changing this forces a new resource to be created.  
+    subnet\_id                       - (Optional) The ID of the Subnet where this Network Interface should be located in.  
 
-    OPTIONAL
-
-    nic\_subnet\_id                       - (Optional) The ID of the Subnet where this Network Interface should be located in.  
-
-    nic\_dns\_servers                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
+    dns\_servers                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
                                           Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.  
 
-    nic\_edge\_zone                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.  
+    edge\_zone                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.  
 
-    nic\_ip\_forwarding\_enabled           - (Optional) Should IP Forwarding be enabled? Defaults to false.  
+    ip\_forwarding\_enabled           - (Optional) Should IP Forwarding be enabled? Defaults to false.  
 
-    nic\_accelerated\_networking\_enabled  - (Optional) Should Accelerated Networking be enabled? Defaults to false.   
-                                          Only certain Virtual Machine sizes are supported for Accelerated Networking.  
-                                          For more information check https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli.  
-                                          To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.  
+    accelerated\_networking\_enabled  - (Optional) Should Accelerated Networking be enabled? Defaults to false.   
+                                      Only certain Virtual Machine sizes are supported for Accelerated Networking.  
+                                      For more information check https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli.  
+                                      To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.  
 
-    nic\_internal\_dns\_name\_label         - (Optional) The (relative) DNS Name used for internal communications between Virtual Machines in the same Virtual Network.  
+    internal\_dns\_name\_label         - (Optional) The (relative) DNS Name used for internal communications between Virtual Machines in the same Virtual Network.  
+      
+    network\_security\_group\_id       - (Optional) The Network Security Group ID associated with this Network Interface.  
 
-    IP CONFIGURATION
+    application\_security\_group\_ids  - (Optional) A list of Application Security Group IDs associated with this Network Interface.  
 
-    nic\_ip\_config -  (Required) One or more ip\_configuration blocks as defined below.  
-        nic\_ip\_config\_name                  - (Required) A name used for this IP Configuration.  
-        nic\_ip\_config\_private\_ip\_allocation - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.  
-        nic\_ip\_config\_private\_ip\_address    - (Optional) The Static IP Address which should be used. Required when nic\_ip\_config\_private\_ip\_allocation = "Static".  
-        nic\_ip\_config\_public\_ip\_id          - (Optional) Reference to a Public IP Address to associate with this NIC  
-        nic\_ip\_config\_primary               - (Optional) Is this the Primary IP Configuration? Must be true for the first nic\_ip\_config when multiple are specified. Defaults to false.
+    ip\_config                       -  (Required) One or more ip\_configuration blocks as defined below.
+
+        name                  - (Required) A name used for this IP Configuration.  
+        private\_ip\_allocation - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.  
+        private\_ip\_address    - (Optional) The Static IP Address which should be used. Required when private\_ip\_allocation = "Static".  
+        public\_ip\_id          - (Optional) Reference to a Public IP Address to associate with this NIC  
+        primary               - (Optional) Is this the Primary IP Configuration? Must be true for the first ip\_config when multiple are specified. Defaults to false.
 
 Type:
 
 ```hcl
 list(object({
-    nic_name                           = string
-    nic_subnet_id                      = optional(string)
-    nic_dns_servers                    = optional(list(string))
-    nic_edge_zone                      = optional(string)
-    nic_ip_forwarding_enabled          = optional(bool)
-    nic_accelerated_networking_enabled = optional(bool)
-    nic_internal_dns_name_label        = optional(string)
-    nic_ip_config = list(object({
-      nic_ip_config_name                  = string
-      nic_ip_config_private_ip_allocation = optional(string)
-      nic_ip_config_private_ip_address    = optional(string)
-      nic_ip_config_public_ip_id          = optional(string)
-      nic_ip_config_primary               = optional(bool)
-    }))
+    name                           = string
+    subnet_id                      = optional(string)
+    dns_servers                    = optional(list(string))
+    edge_zone                      = optional(string)
+    ip_forwarding_enabled          = optional(bool)
+    accelerated_networking_enabled = optional(bool)
+    internal_dns_name_label        = optional(string)
+    network_security_group_id      = optional(string)
+    application_security_group_ids = optional(list(string))
+    ip_config = optional(list(object({
+      name                         = string
+      private_ip_allocation        = optional(string, "Dynamic")
+      private_ip_address           = optional(string)
+      public_ip_id                 = optional(string)
+      primary                      = optional(bool, false)
+      })),
+      [{
+        name                  = "default"
+        private_ip_allocation = "Dynamic"
+        primary               = true
+      }]
+    )
   }))
 ```
 
@@ -267,59 +266,77 @@ Default: `null`
 
 ### <a name="input_nic_default_interface"></a> [nic\_default\_interface](#input\_nic\_default\_interface)
 
-Description:     (Required) The default Network Interfaces to be created.
+Description:     <!-- markdownlint-disable-file MD033 MD012 -->
+    (Optional) The default Network Interfaces to be created.
 
-    REQUIRED
+    name                            - (Required) The name of the Network Interface. Changing this forces a new resource to be created.
 
-    nic\_name                            - (Required) The name of the Network Interface. Changing this forces a new resource to be created.  
+    subnet\_id                       - (Optional) The ID of the Subnet where this Network Interface should be located in.  
 
-    OPTIONAL
+    dns\_servers                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
+                                      Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.  
 
-    nic\_subnet\_id                       - (Optional) The ID of the Subnet where this Network Interface should be located in.  
+    edge\_zone                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.  
 
-    nic\_dns\_servers                     - (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
-                                          Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.  
+    ip\_forwarding\_enabled           - (Optional) Should IP Forwarding be enabled? Defaults to false.  
 
-    nic\_edge\_zone                       - (Optional) Specifies the Edge Zone within the Azure Region where this Network Interface should exist. Changing this forces a new Network Interface to be created.  
+    accelerated\_networking\_enabled  - (Optional) Should Accelerated Networking be enabled? Defaults to false.   
+                                      Only certain Virtual Machine sizes are supported for Accelerated Networking.  
+                                      For more information check https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli.  
+                                      To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.  
 
-    nic\_ip\_forwarding\_enabled           - (Optional) Should IP Forwarding be enabled? Defaults to false.  
+    internal\_dns\_name\_label         - (Optional) The (relative) DNS Name used for internal communications between Virtual Machines in the same Virtual Network.  
 
-    nic\_accelerated\_networking\_enabled  - (Optional) Should Accelerated Networking be enabled? Defaults to false.   
-                                          Only certain Virtual Machine sizes are supported for Accelerated Networking.  
-                                          For more information check https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli.  
-                                          To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.  
+    network\_security\_group\_id       - (Optional) The Network Security Group ID associated with this Network Interface.  
 
-    nic\_internal\_dns\_name\_label         - (Optional) The (relative) DNS Name used for internal communications between Virtual Machines in the same Virtual Network.  
+    application\_security\_group\_ids  - (Optional) A list of Application Security Group IDs associated with this Network Interface.
 
-    IP CONFIGURATION
+    ip\_config                       - (Required) One or more ip\_configuration blocks as defined below.
 
-    nic\_ip\_config -  (Required) One or more ip\_configuration blocks as defined below.  
-        nic\_ip\_config\_name                  - (Required) A name used for this IP Configuration.  
-        nic\_ip\_config\_private\_ip\_allocation - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.  
-        nic\_ip\_config\_private\_ip\_address    - (Optional) The Static IP Address which should be used. Required when nic\_ip\_config\_private\_ip\_allocation = "Static".  
-        nic\_ip\_config\_public\_ip\_id          - (Optional) Reference to a Public IP Address to associate with this NIC  
-        nic\_ip\_config\_primary               - (Optional) Is this the Primary IP Configuration? Must be true for the first nic\_ip\_config when multiple are specified. Defaults to false.
+        name                  - (Required) A name used for this IP Configuration.  
+        private\_ip\_allocation - (Optional) The allocation method used for the Private IP Address. Possible values are Dynamic and Static. Defaults to Dynamic.  
+        private\_ip\_address    - (Optional) The Static IP Address which should be used. Required when private\_ip\_allocation = "Static".  
+        public\_ip\_id          - (Optional) Reference to a Public IP Address to associate with this NIC  
+        primary               - (Optional) Is this the Primary IP Configuration? Must be true for the first ip\_config when multiple are specified. Defaults to false.
 
 Type:
 
 ```hcl
 object({
-    nic_name                           = string
-    nic_subnet_id                      = optional(string)
-    nic_dns_servers                    = optional(list(string))
-    nic_edge_zone                      = optional(string)
-    nic_ip_forwarding_enabled          = optional(bool)
-    nic_accelerated_networking_enabled = optional(bool)
-    nic_internal_dns_name_label        = optional(string)
-    nic_ip_config = list(object({
-      nic_ip_config_name                  = string
-      nic_ip_config_private_ip_allocation = optional(string)
-      nic_ip_config_private_ip_address    = optional(string)
-      nic_ip_config_public_ip_id          = optional(string)
-      nic_ip_config_primary               = optional(bool)
-    }))
+    name                           = string
+    subnet_id                      = optional(string)
+    dns_servers                    = optional(list(string))
+    edge_zone                      = optional(string)
+    ip_forwarding_enabled          = optional(bool)
+    accelerated_networking_enabled = optional(bool)
+    internal_dns_name_label        = optional(string)
+    network_security_group_id      = optional(string)
+    application_security_group_ids = optional(list(string))
+    ip_config = optional(list(object({
+      name                         = string
+      private_ip_allocation        = optional(string, "Dynamic")
+      private_ip_address           = optional(string)
+      public_ip_id                 = optional(string)
+      primary                      = optional(bool, false)
+      })),
+      [{
+        name                  = "default"
+        private_ip_allocation = "Dynamic"
+        primary               = true
+      }]
+    )
   })
 ```
+
+Default: `null`
+
+### <a name="input_nic_dns_servers"></a> [nic\_dns\_servers](#input\_nic\_dns\_servers)
+
+Description:     <!-- markdownlint-disable-file MD033 MD012 -->
+    (Optional) A list of IP Addresses defining the DNS Servers which should be used for this Network Interface.   
+    Configuring DNS Servers on the Network Interface will override the DNS Servers defined on the Virtual Network.
+
+Type: `list(string)`
 
 Default: `null`
 
@@ -343,9 +360,41 @@ Default: `null`
 
 The following outputs are exported:
 
+### <a name="output_nic_additional_asg_association"></a> [nic\_additional\_asg\_association](#output\_nic\_additional\_asg\_association)
+
+Description: FOR TROUBLESHOOTING
+
+### <a name="output_nic_additional_interface"></a> [nic\_additional\_interface](#output\_nic\_additional\_interface)
+
+Description: FOR TROUBLESHOOTING
+
+### <a name="output_nic_additional_nsg_association"></a> [nic\_additional\_nsg\_association](#output\_nic\_additional\_nsg\_association)
+
+Description: FOR TROUBLESHOOTING
+
+### <a name="output_nic_asg_association"></a> [nic\_asg\_association](#output\_nic\_asg\_association)
+
+Description: A list of all asg associations.
+
+### <a name="output_nic_default_asg_association"></a> [nic\_default\_asg\_association](#output\_nic\_default\_asg\_association)
+
+Description: FOR TROUBLESHOOTING
+
+### <a name="output_nic_default_interface"></a> [nic\_default\_interface](#output\_nic\_default\_interface)
+
+Description: FOR TROUBLESHOOTING
+
+### <a name="output_nic_default_nsg_association"></a> [nic\_default\_nsg\_association](#output\_nic\_default\_nsg\_association)
+
+Description: FOR TROUBLESHOOTING
+
 ### <a name="output_nic_interface_list"></a> [nic\_interface\_list](#output\_nic\_interface\_list)
 
-Description: n/a
+Description: A list of all interfaces.
+
+### <a name="output_nic_nsg_association"></a> [nic\_nsg\_association](#output\_nic\_nsg\_association)
+
+Description: A list of all nsg associations.
 
 <!-- markdownlint-disable-file MD033 MD012 -->
 ## Contributing
@@ -363,7 +412,7 @@ Description: n/a
 ```text
 MIT License
 
-Copyright (c) 2022 LederWorks
+Copyright (c) 2023 LederWorks
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
