@@ -34,7 +34,7 @@ jobs:
       with:
         useConfigFile: true
         configFilePath: VersionConfig.yml
-        additionalArguments: '/showConfig'
+        # additionalArguments: '/showConfig'
     
     - name: Display GitVersion outputs (step output)
       run: |
