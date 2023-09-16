@@ -1,12 +1,12 @@
 name: Release - terraform-azurerm-easy-brick-network-nic
 
-# on:
-#   push:
-#     branches:
-#       - main
-
 on:
-  - pull_request
+  push:
+    branches:
+      - main
+
+# on:
+#   - pull_request
 
 jobs:
   docs:
