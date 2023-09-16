@@ -30,7 +30,8 @@ jobs:
 
     - name: Generate Changelog
       id: changelog
-      run: npx conventional-changelog -i CHANGELOG.md -s -p angular
+      # run: npx conventional-changelog -i CHANGELOG.md -s -p angular
+      run: npm i conventional-changelog-angular
     
     - name: Determine Version
       id:   gitversion
