@@ -39,7 +39,7 @@ jobs:
       with:
         useConfigFile: true
         configFilePath: ./.github/gitversionconfig.yml
-        # additionalArguments: '/showConfig'
+
 
     - name: Display GitVersion Output
       run: echo "The determined version is v${{ steps.gitversion.outputs.MajorMinorPatch }}"
@@ -63,10 +63,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.gitversion.outputs.semVer }}
-        release_name: Release ${{ steps.gitversion.outputs.semVer }}
-        # body: ${{ steps.changelog.outputs.changelog }}
-        body: "TEST"
+        tag_name: ${{ steps.gitversion.outputs.MajorMinorPatch }}
+        release_name: v${{ steps.gitversion.outputs.MajorMinorPatch }}
+        body: ${{ steps.changelog.outputs.changelog }}
         draft: false
         prerelease: false
 
