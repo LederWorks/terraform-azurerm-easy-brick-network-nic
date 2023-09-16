@@ -28,9 +28,9 @@ jobs:
       with:
         token: '${{ secrets.GITHUB_TOKEN }}'
 
-    # - name: Generate Changelog
-    #   id: changelog
-    #   run: npx conventional-changelog -i CHANGELOG.md -s -p angular
+    - name: Generate Changelog
+      id: changelog
+      run: npx conventional-changelog -i CHANGELOG.md -s -p angular
     
     - name: Determine Version
       id:   gitversion
@@ -41,7 +41,7 @@ jobs:
         # additionalArguments: '/showConfig'
 
     - name: Display GitVersion Output
-      run: echo "The determined version is ${{ steps.gitversion.outputs.MajorMinorPatch }}"
+      run: echo "The determined version is v${{ steps.gitversion.outputs.MajorMinorPatch }}"
 
     - name: Create Git Semver Tag
       run: git tag --annotate --message "PR#${{ github.event.number }}" v${{ steps.gitversion.outputs.MajorMinorPatch }}
